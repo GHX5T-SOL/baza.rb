@@ -94,8 +94,7 @@ class BazaRb::Fake
   # @param [String] owner The owner of the lock (any string)
   def lock(name, owner)
     assert_name(name)
-    raise 'The "owner" of the lock is nil' if owner.nil?
-    raise 'The "owner" of the lock may not be empty' if owner.empty?
+    assert_owner(owner)
   end
 
   # Unlock the name.
@@ -104,8 +103,7 @@ class BazaRb::Fake
   # @param [String] owner The owner of the lock (any string)
   def unlock(name, owner)
     assert_name(name)
-    raise 'The "owner" of the lock is nil' if owner.nil?
-    raise 'The "owner" of the lock may not be empty' if owner.empty?
+    assert_owner(owner)
   end
 
   # Get the ID of the job by the name.
@@ -173,8 +171,7 @@ class BazaRb::Fake
   # @param [String] owner The owner of the lock
   def durable_lock(id, owner)
     assert_id(id)
-    raise 'The "owner" of the lock is nil' if owner.nil?
-    raise 'The "owner" of the lock may not be empty' if owner.empty?
+    assert_owner(owner)
   end
 
   # Unlock a single durable.
@@ -183,8 +180,7 @@ class BazaRb::Fake
   # @param [String] owner The owner of the lock
   def durable_unlock(id, owner)
     assert_id(id)
-    raise 'The "owner" of the lock is nil' if owner.nil?
-    raise 'The "owner" of the lock may not be empty' if owner.empty?
+    assert_owner(owner)
   end
 
   # Get current balance of the authenticated user.
@@ -259,6 +255,12 @@ class BazaRb::Fake
   def assert_name(name)
     raise "The name #{name.inspect} is not valid" unless name.match?(/\A[a-z0-9-]+\z/)
     raise "The name #{name.inspect} is too long" if name.length > 32
+  end
+
+  def assert_owner(owner)
+    raise 'The "owner" of the lock is nil' if owner.nil?
+    raise 'The "owner" of the lock may not be empty' if owner.empty?
+    raise "The owner #{owner.inspect} is not valid" if owner.match?(/[\r\n]/)
   end
 
   def assert_id(id)
